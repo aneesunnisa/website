@@ -1,0 +1,99 @@
+npm install -g @wxt/cli
+wxt create linkedin-connector
+npm install react react-dom
+{
+  "manifest_version": 3,
+  "name": "LinkedIn Connector",
+  "description": "Automate LinkedIn connection requests",
+  "version": "1.0",
+  "permissions": ["tabs", "scripting"],
+  "host_permissions": [
+    "https://www.linkedin.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.linkedin.com/mynetwork/grow/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "action": {
+    "default_popup": "index.html"
+  }
+}
+import React from 'react';
+import './Button.css';
+
+const ConnectButton = ({ onClick }) => {
+  return (
+    <div className="floating-btn">
+      <button onClick={onClick}>Connect with All</button>
+    </div>
+  );
+};
+
+export default ConnectButton;
+import React from 'react';
+import ReactDOM from 'react-dom';
+import ConnectButton from './components/Button';
+
+// Function to inject the button
+const injectButton = () => {
+  const container = document.createElement('div');
+  document.body.appendChild(container);
+  
+  const handleConnectAll = () => {
+    // Call the function to automate connection requests
+    connectWithAll();
+  };
+
+  ReactDOM.render(<ConnectButton onClick={handleConnectAll} />, container);
+};
+
+// Call the injectButton function when the script is loaded
+injectButton();
+
+// Function to automate clicking all 'Connect' buttons
+const connectWithAll = async () => {
+  const connectButtons = document.querySelectorAll('button:contains("Connect")');
+  for (let button of connectButtons) {
+    button.click();
+    await new Promise(resolve => setTimeout(resolve, getRandomDelay()));
+  }
+};
+
+const getRandomDelay = () => {
+  return Math.floor(Math.random() * 2000) + 1000; // Delay between 1 and 3 seconds
+};
+.floating-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.floating-btn button {
+  padding: 10px 20px;
+  background-color: #0073b1;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+const connectWithAll = async () => {
+  const connectButtons = document.querySelectorAll('button:contains("Connect")');
+  
+  if (connectButtons.length === 0) {
+    alert("No connectable profiles found.");
+    return;
+  }
+
+  for (let button of connectButtons) {
+    button.click();
+    await new Promise(resolve => setTimeout(resolve, getRandomDelay()));
+  }
+};
+wxt build
